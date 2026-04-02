@@ -1,0 +1,8 @@
+# Cloudflare Pages: el sitio debe ser la salida de Vite (carpeta dist).
+# Si el panel no lo respeta, en Dashboard → Settings → Builds:
+#   Build command: npm run build
+#   Build output directory: dist
+
+name = "toyota"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
