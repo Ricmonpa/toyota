@@ -146,9 +146,9 @@ export default function ToyotaWidget() {
           </div>
         </div>
 
-        {/* Zona del Vehículo (Visualizador Interactivo) */}
+        {/* Zona del Vehículo (Visualizador Interactivo) — estudio tipo showroom */}
         <div
-          className={`relative h-52 bg-gradient-to-b from-gray-50 to-gray-200 flex items-center justify-center overflow-hidden select-none touch-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`relative isolate flex min-h-[13.5rem] h-[13.5rem] w-full flex-col overflow-hidden select-none touch-none sm:min-h-[15rem] sm:h-[15rem] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
           style={{ touchAction: 'none' }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => {
@@ -171,17 +171,61 @@ export default function ToyotaWidget() {
           }}
           onTouchEnd={handleDragEnd}
         >
-          <div className={`absolute top-3 text-[11px] text-gray-500 font-medium transition-opacity duration-300 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm z-10 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Softbox / spotlight en la pared */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_88%_72%_at_50%_34%,#ffffff_0%,#f4f6f8_28%,#e8ecf0_52%,#cfd6dd_78%,#9aa5b0_100%)]"
+            aria-hidden
+          />
+          {/* Viñeta para profundidad */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_115%_100%_at_50%_48%,transparent_42%,rgba(55,65,81,0.14)_88%,rgba(31,41,55,0.22)_100%)]"
+            aria-hidden
+          />
+
+          <div
+            className={`pointer-events-none absolute left-1/2 top-2.5 z-20 -translate-x-1/2 text-[11px] font-medium text-gray-600 transition-opacity duration-300 sm:top-3 ${isHovering ? 'opacity-100' : 'opacity-0'} rounded-full bg-white/70 px-3 py-1 shadow-sm backdrop-blur-sm`}
+          >
             Arrastra para rotar 360°
           </div>
 
-          <div className="w-full max-w-[280px] px-4 flex items-center justify-center">
-            <img
-              src={getSpinForColor(selectedColor.id).url(currentFrame)}
-              alt="Toyota Yaris — vista 360"
-              className="w-full h-auto object-contain pointer-events-none drop-shadow-2xl"
-              draggable={false}
-            />
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-end px-3 pb-1.5 pt-8 sm:px-5 sm:pb-2 sm:pt-9">
+            <div className="relative mx-auto w-full max-w-[280px]">
+              {/* Sombra de contacto en el piso */}
+              <div
+                className="pointer-events-none absolute bottom-[4%] left-1/2 z-0 h-4 w-[76%] max-w-[210px] -translate-x-1/2 rounded-full bg-black/40 blur-md sm:bottom-[5%] sm:h-5 sm:max-w-[230px] sm:blur-lg"
+                aria-hidden
+              />
+
+              <div className="relative z-[1] flex flex-col items-center">
+                <img
+                  key={`car-${selectedColor.id}-${currentFrame}`}
+                  src={getSpinForColor(selectedColor.id).url(currentFrame)}
+                  alt="Toyota Yaris — vista 360"
+                  className="relative z-[2] h-auto w-full max-h-[6.25rem] object-contain object-bottom pointer-events-none sm:max-h-[7.25rem] [filter:drop-shadow(0_20px_32px_rgba(15,23,42,0.34))_drop-shadow(0_10px_18px_rgba(0,0,0,0.22))_drop-shadow(0_4px_10px_rgba(0,0,0,0.16))_drop-shadow(0_1px_3px_rgba(0,0,0,0.12))]"
+                  draggable={false}
+                />
+                {/* Reflejo en piso (showroom) */}
+                <div
+                  className="pointer-events-none relative -mt-0.5 flex w-[94%] justify-center overflow-hidden sm:-mt-1 sm:w-[92%]"
+                  style={{
+                    height: 'clamp(2rem, 9vw, 2.75rem)',
+                    WebkitMaskImage:
+                      'linear-gradient(to bottom, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.38) 38%, rgba(0,0,0,0.12) 68%, transparent 100%)',
+                    maskImage:
+                      'linear-gradient(to bottom, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.38) 38%, rgba(0,0,0,0.12) 68%, transparent 100%)',
+                  }}
+                  aria-hidden
+                >
+                  <img
+                    key={`refl-${selectedColor.id}-${currentFrame}`}
+                    src={getSpinForColor(selectedColor.id).url(currentFrame)}
+                    alt=""
+                    className="h-auto w-full max-h-[6.25rem] -scale-y-100 object-contain object-bottom opacity-[0.16] sm:max-h-[7.25rem] sm:opacity-[0.2]"
+                    draggable={false}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
