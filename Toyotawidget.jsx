@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Check, ShieldCheck, MonitorPlay, Camera, Lightbulb, Cog } from 'lucide-react';
+import { ChevronRight, Check, ShieldCheck, MonitorPlay, Camera, Lightbulb } from 'lucide-react';
 
 const CAR_BASE_PRICE = 320500; // Precio base real del Yaris Hatchback Base CVT
 
@@ -7,6 +7,7 @@ const CAR_BASE_PRICE = 320500; // Precio base real del Yaris Hatchback Base CVT
 const COLORS = [
   { id: 'plata', name: 'Plata Metálico', hex: '#A9B0B3', price: 0, shadow: 'rgba(169,176,179,0.5)' },
   { id: 'blanco', name: 'Blanco', hex: '#F4F6F6', price: 0, shadow: 'rgba(255,255,255,0.5)' },
+  { id: 'cemento', name: 'Gris cemento', hex: '#8E9398', price: 0, shadow: 'rgba(142,147,152,0.5)' },
   { id: 'escarlata', name: 'Escarlata', hex: '#C61F2B', price: 0, shadow: 'rgba(198,31,43,0.5)' },
   { id: 'gris', name: 'Gris Oscuro', hex: '#4A4C4E', price: 0, shadow: 'rgba(74,76,78,0.5)' },
   { id: 'negro', name: 'Negro', hex: '#1A1A1C', price: 0, shadow: 'rgba(26,26,28,0.5)' },
@@ -21,17 +22,23 @@ const FEATURES = [
 
 const PIXELS_PER_FRAME = 18;
 
+const SPIN_FRAME_COUNT = 8;
+
+/** Cada color usa /public/frames/{id}1.jpeg … {id}8.jpeg (misma secuencia 360°). */
+const SPIN_BY_COLOR = Object.fromEntries(
+  COLORS.map(({ id }) => [
+    id,
+    {
+      frameCount: SPIN_FRAME_COUNT,
+      url: (i) => `/frames/${id}${i}.jpeg`,
+    },
+  ])
+);
+
+/** Respaldo si se añade un color sin carpeta de frames (36 webp genéricos). */
 const DEFAULT_SPIN = {
   frameCount: 36,
   url: (i) => `/frames/frame_${i}.webp`,
-};
-
-/** 360 por color: por defecto 36 webp; escarlata usa 8 JPG en /public/frames/ */
-const SPIN_BY_COLOR = {
-  escarlata: {
-    frameCount: 8,
-    url: (i) => `/frames/escarlata${i}.jpeg`,
-  },
 };
 
 function getSpinForColor(colorId) {
@@ -69,7 +76,6 @@ export default function ToyotaWidget() {
         img.src = urlFn(i);
       }
     };
-    preload(DEFAULT_SPIN.frameCount, DEFAULT_SPIN.url);
     Object.values(SPIN_BY_COLOR).forEach((spin) => preload(spin.frameCount, spin.url));
   }, []);
 
@@ -263,17 +269,20 @@ export default function ToyotaWidget() {
               </div>
               
               {/* Selector de Colores */}
-              <div className="flex justify-center gap-4 mt-4">
+              <div className="mt-4 flex flex-wrap justify-center gap-3">
                 {COLORS.map((color) => (
                   <button
                     key={color.id}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border border-gray-300 ${selectedColor.id === color.id ? 'ring-2 ring-offset-2 ring-[#EB0A1E] scale-110 shadow-lg' : 'hover:scale-105'}`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-300 transition-all duration-300 ${selectedColor.id === color.id ? 'scale-110 shadow-lg ring-2 ring-[#EB0A1E] ring-offset-2' : 'hover:scale-105'}`}
                     style={{ backgroundColor: color.hex }}
                     aria-label={`Seleccionar color ${color.name}`}
                   >
                     {selectedColor.id === color.id && (
-                      <Check size={18} color={['#F4F6F6', '#A9B0B3'].includes(color.hex) ? '#000' : '#fff'} />
+                      <Check
+                        size={18}
+                        color={['#F4F6F6', '#A9B0B3'].includes(color.hex) ? '#000' : '#fff'}
+                      />
                     )}
                   </button>
                 ))}
