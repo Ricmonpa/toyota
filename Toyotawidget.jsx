@@ -152,10 +152,10 @@ export default function ToyotaWidget() {
           </div>
         </div>
 
-        {/* Zona del Vehículo (Visualizador Interactivo) — estudio tipo showroom */}
+        {/* Visualizador 360 — fondo #fff alineado con el blanco de las fotos oficiales */}
         <div
-          className={`relative isolate flex min-h-[13.5rem] h-[13.5rem] w-full flex-col overflow-hidden select-none touch-none sm:min-h-[15rem] sm:h-[15rem] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-          style={{ touchAction: 'none' }}
+          className={`relative isolate flex min-h-[16rem] h-[16rem] w-full flex-col overflow-hidden bg-[#FFFFFF] select-none touch-none sm:min-h-[17.5rem] sm:h-[17.5rem] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          style={{ touchAction: 'none', backgroundColor: '#FFFFFF' }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => {
             setIsHovering(false);
@@ -177,28 +177,17 @@ export default function ToyotaWidget() {
           }}
           onTouchEnd={handleDragEnd}
         >
-          {/* Softbox / spotlight en la pared */}
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_88%_72%_at_50%_34%,#ffffff_0%,#f4f6f8_28%,#e8ecf0_52%,#cfd6dd_78%,#9aa5b0_100%)]"
-            aria-hidden
-          />
-          {/* Viñeta para profundidad */}
-          <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_115%_100%_at_50%_48%,transparent_42%,rgba(55,65,81,0.14)_88%,rgba(31,41,55,0.22)_100%)]"
-            aria-hidden
-          />
-
-          <div
-            className={`pointer-events-none absolute left-1/2 top-2.5 z-20 -translate-x-1/2 text-[11px] font-medium text-gray-600 transition-opacity duration-300 sm:top-3 ${isHovering ? 'opacity-100' : 'opacity-0'} rounded-full bg-white/70 px-3 py-1 shadow-sm backdrop-blur-sm`}
+            className={`pointer-events-none absolute left-1/2 top-2.5 z-20 -translate-x-1/2 text-[11px] font-medium text-gray-600 transition-opacity duration-300 sm:top-3 ${isHovering ? 'opacity-100' : 'opacity-0'} rounded-full border border-gray-200/80 bg-white/90 px-3 py-1 shadow-sm backdrop-blur-sm`}
           >
             Arrastra para rotar 360°
           </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-end px-3 pb-1.5 pt-8 sm:px-5 sm:pb-2 sm:pt-9">
-            <div className="relative mx-auto w-full max-w-[280px]">
-              {/* Sombra de contacto en el piso */}
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-end px-1.5 pb-1 pt-7 sm:px-3 sm:pb-1.5 sm:pt-8">
+            <div className="relative mx-auto w-full max-w-[min(100%,360px)]">
+              {/* Sombra de contacto (sutil sobre blanco puro) */}
               <div
-                className="pointer-events-none absolute bottom-[4%] left-1/2 z-0 h-4 w-[76%] max-w-[210px] -translate-x-1/2 rounded-full bg-black/40 blur-md sm:bottom-[5%] sm:h-5 sm:max-w-[230px] sm:blur-lg"
+                className="pointer-events-none absolute bottom-[3%] left-1/2 z-0 h-5 w-[82%] max-w-[280px] -translate-x-1/2 rounded-full bg-black/28 blur-md sm:bottom-[4%] sm:h-6 sm:max-w-[300px] sm:blur-lg"
                 aria-hidden
               />
 
@@ -207,14 +196,13 @@ export default function ToyotaWidget() {
                   key={`car-${selectedColor.id}-${currentFrame}`}
                   src={getSpinForColor(selectedColor.id).url(currentFrame)}
                   alt="Toyota Yaris — vista 360"
-                  className="relative z-[2] h-auto w-full max-h-[6.25rem] object-contain object-bottom pointer-events-none sm:max-h-[7.25rem] [filter:drop-shadow(0_20px_32px_rgba(15,23,42,0.34))_drop-shadow(0_10px_18px_rgba(0,0,0,0.22))_drop-shadow(0_4px_10px_rgba(0,0,0,0.16))_drop-shadow(0_1px_3px_rgba(0,0,0,0.12))]"
+                  className="relative z-[2] h-auto w-full max-h-[8.75rem] object-contain object-bottom pointer-events-none sm:max-h-[10.5rem] [filter:drop-shadow(0_18px_28px_rgba(15,23,42,0.22))_drop-shadow(0_8px_14px_rgba(0,0,0,0.14))_drop-shadow(0_2px_6px_rgba(0,0,0,0.1))]"
                   draggable={false}
                 />
-                {/* Reflejo en piso (showroom) */}
                 <div
-                  className="pointer-events-none relative -mt-0.5 flex w-[94%] justify-center overflow-hidden sm:-mt-1 sm:w-[92%]"
+                  className="pointer-events-none relative -mt-0.5 flex w-[96%] justify-center overflow-hidden sm:-mt-1 sm:w-[94%]"
                   style={{
-                    height: 'clamp(2rem, 9vw, 2.75rem)',
+                    height: 'clamp(2.35rem, 11vw, 3.35rem)',
                     WebkitMaskImage:
                       'linear-gradient(to bottom, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.38) 38%, rgba(0,0,0,0.12) 68%, transparent 100%)',
                     maskImage:
@@ -226,7 +214,7 @@ export default function ToyotaWidget() {
                     key={`refl-${selectedColor.id}-${currentFrame}`}
                     src={getSpinForColor(selectedColor.id).url(currentFrame)}
                     alt=""
-                    className="h-auto w-full max-h-[6.25rem] -scale-y-100 object-contain object-bottom opacity-[0.16] sm:max-h-[7.25rem] sm:opacity-[0.2]"
+                    className="h-auto w-full max-h-[8.75rem] -scale-y-100 object-contain object-bottom opacity-[0.14] sm:max-h-[10.5rem] sm:opacity-[0.18]"
                     draggable={false}
                   />
                 </div>
