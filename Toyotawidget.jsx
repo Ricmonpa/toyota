@@ -1,7 +1,269 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Check, ShieldCheck, MonitorPlay, Camera, Lightbulb } from 'lucide-react';
+import { ChevronRight, Check } from 'lucide-react';
 
-const CAR_BASE_PRICE = 320500; // Precio base real del Yaris Hatchback Base CVT
+/** Versiones oficiales Yaris Hatchback (MX) — el valor del artefacto vs. solo color en toyota.mx */
+const VERSIONS = [
+  {
+    id: 'base-cvt',
+    shortLabel: 'Base CVT',
+    fullName: 'Yaris Hatchback Base CVT',
+    price: 320500,
+    highlights: [
+      '7 bolsas de aire',
+      'Cámara de reversa',
+      'Pantalla táctil de 7"',
+      'Control de Estabilidad de Vehículo (VSC)',
+      'Faros y luces delanteras LED',
+      'Transmisión CVT',
+    ],
+    sections: [
+      {
+        title: 'Características generales',
+        items: [
+          '7 bolsas de aire',
+          'Cámara de reversa',
+          'Pantalla táctil de 7"',
+          'Control de Estabilidad de Vehículo (VSC)',
+          'Faros y luces delanteras LED',
+          'Transmisión CVT',
+        ],
+      },
+      {
+        title: 'Exterior',
+        items: [
+          'Antena en toldo',
+          'Defensa delantera y trasera al color de la carrocería',
+          'Desempañador',
+          'Espejos al color de la carrocería, abatibles manualmente y con ajuste eléctrico',
+          'Faros y luces delanteras LED',
+          'Luces diurnas (DRL) con tira LED',
+          'Manijas al color de la carrocería',
+          'Parrilla frontal piano black',
+        ],
+      },
+      {
+        title: 'Interior',
+        items: [
+          'Aire acondicionado manual',
+          'Asiento conductor tipo cubo, ajuste manual 4 direcciones',
+          'Asiento pasajero tipo cubo, ajuste manual 4 direcciones',
+          'Segunda fila tipo banca abatible',
+          'Cámara de reversa',
+          'Conectores frontales 12 V (1) y USB (1)',
+          'Controles al volante',
+          'Espejo retrovisor día/noche',
+          'Iluminación interior de cortesía',
+          'Portavasos (6)',
+          'Android Auto® y Apple CarPlay®',
+          'Audio AM/FM, MP3/WMA/AAC, pantalla 7", USB y 4 bocinas',
+          'Bluetooth®',
+          'Ventanas eléctricas (conductor un toque adelante)',
+          'Vestiduras de tela',
+          'Viseras con espejo',
+        ],
+      },
+      {
+        title: 'Seguridad',
+        items: [
+          'Alarma e inmovilizador',
+          'Bolsas de aire frontales (2), laterales (2), rodillas (1) y cortina (2)',
+          'Cinturones delanteros 3 puntos con pretensor y ELR',
+          'Cinturones traseros 3 puntos con ELR',
+          'Control remoto',
+          'Seguros eléctricos y seguros para niños en puertas traseras',
+          'TPMS',
+          'ISO-FIX / LATCH',
+        ],
+      },
+    ],
+  },
+  {
+    id: 's-mt',
+    shortLabel: 'S MT',
+    fullName: 'Yaris Hatchback S MT',
+    price: 351000,
+    highlights: [
+      'Transmisión manual 5 velocidades',
+      'Asiento conductor 6 direcciones',
+      '2 USB-C traseros',
+      'Espejos eléctricos con luces direccionales',
+      'Faros de niebla LED',
+      'Faros y DRL LED',
+    ],
+    sections: [
+      {
+        title: 'Características generales',
+        items: [
+          'Transmisión manual con 5 velocidades',
+          'Asiento conductor tipo cubo, ajuste manual 6 direcciones',
+          'Conectores traseros USB tipo C (2)',
+          'Espejos al color, abatibles eléctricamente, ajuste eléctrico y luces direccionales',
+          'Faros de niebla LED',
+        ],
+      },
+      {
+        title: 'Exterior',
+        items: [
+          'Antena en toldo',
+          'Defensas al color de la carrocería',
+          'Desempañador',
+          'Espejos eléctricos con luces direccionales',
+          'Faros de niebla LED',
+          'Faros y luces delanteras LED',
+          'DRL con tira LED',
+          'Manijas al color',
+          'Parrilla frontal piano black',
+        ],
+      },
+      {
+        title: 'Interior',
+        items: [
+          'Aire acondicionado manual',
+          'Asientos tipo cubo (conductor 6 / pasajero 4 direcciones)',
+          'Segunda fila banca abatible',
+          'Cámara de reversa',
+          '12 V y USB frontales; 2 USB-C traseros',
+          'Controles al volante',
+          'Palanca forrada en piel',
+          'Pantalla multiinformación (MID)',
+          'Portavasos (6)',
+          'Android Auto® y Apple CarPlay®',
+          'Audio con pantalla táctil 7", 4 bocinas',
+          'Bluetooth®',
+          'Ventanas eléctricas',
+          'Vestiduras tela / piel sintética',
+          'Volante forrado en piel',
+        ],
+      },
+      {
+        title: 'Seguridad',
+        items: [
+          'Alarma, inmovilizador y birlos de seguridad',
+          '7 bolsas de aire (frontales, laterales, rodilla, cortina)',
+          'Cinturones con pretensor y ELR',
+          'Seguros eléctricos, seguro niños trasero',
+          'TPMS',
+          'ISO-FIX / LATCH',
+        ],
+      },
+    ],
+  },
+  {
+    id: 's-cvt',
+    shortLabel: 'S CVT',
+    fullName: 'Yaris Hatchback S CVT',
+    price: 377300,
+    highlights: [
+      'Toyota Safety Sense (TSS)',
+      'Pantalla multiinformación 4.2"',
+      'Espejos eléctricos con direccionales',
+      'Faros de niebla LED',
+      '2 USB-C traseros',
+      'Transmisión CVT',
+    ],
+    sections: [
+      {
+        title: 'Características generales',
+        items: [
+          'Toyota Safety Sense (TSS)',
+          'Espejos al color, abatibles eléctricamente, ajuste eléctrico y luces direccionales',
+          'Pantalla multi información 4.2"',
+        ],
+      },
+      {
+        title: 'Exterior',
+        items: [
+          'Antena en toldo',
+          'Defensas al color',
+          'Desempañador',
+          'Espejos eléctricos con luces direccionales',
+          'Faros de niebla LED',
+          'Faros y luces delanteras LED',
+          'DRL con tira LED',
+          'Manijas al color',
+          'Parrilla piano black',
+        ],
+      },
+      {
+        title: 'Interior',
+        items: [
+          'Aire acondicionado manual',
+          'Asientos cubo (conductor 6 / pasajero 4 direcciones)',
+          'Segunda fila abatible',
+          'Cámara de reversa',
+          '12 V, USB frontal y 2 USB-C traseros',
+          'Controles al volante',
+          'Palanca forrada en piel',
+          'MID 4.2"',
+          'Portavasos (6)',
+          'Android Auto® y Apple CarPlay®',
+          'Audio pantalla 7", 4 bocinas',
+          'Bluetooth®',
+          'Ventanas eléctricas',
+          'Vestiduras tela / piel sintética',
+          'Volante en piel',
+        ],
+      },
+      {
+        title: 'Seguridad',
+        items: [
+          'Alarma, inmovilizador y birlos',
+          '7 bolsas de aire',
+          'Cinturones con pretensor y ELR',
+          'Seguros eléctricos y seguro niños',
+          'TPMS',
+          'ISO-FIX / LATCH',
+          'TSS: Pre-Colisión (PCS) y Alerta de Cambio de Carril (LDA)',
+        ],
+      },
+    ],
+  },
+];
+
+/** Filas para comparar versiones (lo que Toyota quiere destacar vs. solo color). */
+const COMPARE_ROWS = [
+  { label: 'Transmisión', key: 'trans' },
+  { label: 'Toyota Safety Sense', key: 'tss' },
+  { label: 'Asiento conductor', key: 'asiento' },
+  { label: 'Espejos laterales', key: 'espejos' },
+  { label: 'Faros de niebla LED', key: 'niebla' },
+  { label: 'Pantalla MID', key: 'mid' },
+  { label: 'USB-C traseros', key: 'usbc' },
+  { label: 'Vestiduras', key: 'vest' },
+];
+
+const COMPARE_VALUES = {
+  'base-cvt': {
+    trans: 'CVT',
+    tss: '—',
+    asiento: '4 direcciones',
+    espejos: 'Abatibles manual / ajuste eléctrico',
+    niebla: '—',
+    mid: '—',
+    usbc: '—',
+    vest: 'Tela',
+  },
+  's-mt': {
+    trans: 'Manual 5 vel.',
+    tss: '—',
+    asiento: '6 direcciones',
+    espejos: 'Eléctricos + direccionales',
+    niebla: 'Sí',
+    mid: 'Sí',
+    usbc: '2',
+    vest: 'Tela / piel sintética',
+  },
+  's-cvt': {
+    trans: 'CVT',
+    tss: 'Sí (PCS, LDA)',
+    asiento: '6 direcciones',
+    espejos: 'Eléctricos + direccionales',
+    niebla: 'Sí',
+    mid: '4.2"',
+    usbc: '2',
+    vest: 'Tela / piel sintética',
+  },
+};
 
 // Colores típicos para este segmento
 const COLORS = [
@@ -11,13 +273,6 @@ const COLORS = [
   { id: 'escarlata', name: 'Escarlata', hex: '#C61F2B', price: 0, shadow: 'rgba(198,31,43,0.5)' },
   { id: 'gris', name: 'Gris Oscuro', hex: '#4A4C4E', price: 0, shadow: 'rgba(74,76,78,0.5)' },
   { id: 'negro', name: 'Negro', hex: '#1A1A1C', price: 0, shadow: 'rgba(26,26,28,0.5)' },
-];
-
-const FEATURES = [
-  { icon: ShieldCheck, label: 'Seguridad', desc: '7 Bolsas de aire + VSC' },
-  { icon: MonitorPlay, label: 'Infoentretenimiento', desc: 'Pantalla 7" + CarPlay/Android' },
-  { icon: Camera, label: 'Asistencia', desc: 'Cámara de reversa' },
-  { icon: Lightbulb, label: 'Iluminación', desc: 'Faros y DRL LED' },
 ];
 
 const PIXELS_PER_FRAME = 18;
@@ -50,8 +305,9 @@ function wrapFrame(n, frameCount) {
 }
 
 export default function ToyotaWidget() {
-  const [activeTab, setActiveTab] = useState('visual'); // 'visual' | 'specs' | 'cotizar'
-  const [selectedColor, setSelectedColor] = useState(COLORS[0]); // Empezamos con Plata (como en la foto)
+  const [selectedVersion, setSelectedVersion] = useState(VERSIONS[0]);
+  const [activeTab, setActiveTab] = useState('compare'); // 'compare' | 'visual' | 'cotizar'
+  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [enganche, setEnganche] = useState(20); // Porcentaje
   const [plazo, setPlazo] = useState(48); // Meses
   const [isHovering, setIsHovering] = useState(false);
@@ -109,8 +365,8 @@ export default function ToyotaWidget() {
     setIsDragging(false);
   };
 
-  // Cálculos financieros
-  const totalPrice = CAR_BASE_PRICE + selectedColor.price;
+  // Cálculos financieros (precio según versión + color)
+  const totalPrice = selectedVersion.price + selectedColor.price;
   const engancheAmount = (totalPrice * enganche) / 100;
   const amountToFinance = totalPrice - engancheAmount;
   const interestRate = 0.1399; // 13.99% anual simulado
@@ -143,12 +399,14 @@ export default function ToyotaWidget() {
             />
             <div>
               <h2 className="text-base font-bold tracking-wider leading-none">Yaris Hatchback</h2>
-              <p className="text-[11px] opacity-90 mt-1 font-medium">Base CVT 2024</p>
+              <p className="text-[11px] opacity-90 mt-1 font-medium leading-tight">
+                {selectedVersion.shortLabel} · 2024
+              </p>
             </div>
           </div>
           <div className="text-right">
             <p className="text-[10px] opacity-80 uppercase tracking-wide">Desde</p>
-            <p className="font-bold text-sm">{formatMoney(CAR_BASE_PRICE)}</p>
+            <p className="font-bold text-sm">{formatMoney(selectedVersion.price)}</p>
           </div>
         </div>
 
@@ -223,44 +481,166 @@ export default function ToyotaWidget() {
           </div>
         </div>
 
-        {/* Pestañas de Navegación */}
+        {/* Selector de versión (prioridad vs. sitio Toyota: valor en VERSIONES) */}
+        <div className="border-b border-gray-200 bg-gray-50 px-2 py-2.5">
+          <p className="mb-2 text-center text-[9px] font-bold uppercase tracking-widest text-gray-500">
+            Elige versión
+          </p>
+          <div className="flex gap-1.5">
+            {VERSIONS.map((v) => (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => setSelectedVersion(v)}
+                className={`min-w-0 flex-1 rounded-xl border px-1.5 py-2 text-left transition-all ${
+                  selectedVersion.id === v.id
+                    ? 'border-[#EB0A1E] bg-white shadow-md ring-1 ring-[#EB0A1E]/30'
+                    : 'border-gray-200 bg-white/80 hover:border-gray-300'
+                }`}
+              >
+                <span className="block truncate text-[10px] font-bold leading-tight text-gray-900">
+                  {v.shortLabel}
+                </span>
+                <span className="mt-0.5 block text-[10px] font-semibold text-[#EB0A1E]">
+                  {formatMoney(v.price)}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Pestañas: comparar / color / cotizar */}
         <div className="flex border-b border-gray-200 bg-gray-50">
-          <button 
+          <button
+            type="button"
+            onClick={() => setActiveTab('compare')}
+            className={`min-w-0 flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wide transition-colors sm:text-[11px] sm:tracking-wider ${activeTab === 'compare' ? 'border-b-2 border-[#EB0A1E] bg-white text-[#EB0A1E]' : 'text-gray-500 hover:text-gray-800'}`}
+          >
+            Comparar
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab('visual')}
-            className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors ${activeTab === 'visual' ? 'text-[#EB0A1E] border-b-2 border-[#EB0A1E] bg-white' : 'text-gray-500 hover:text-gray-800'}`}
+            className={`min-w-0 flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wide transition-colors sm:text-[11px] sm:tracking-wider ${activeTab === 'visual' ? 'border-b-2 border-[#EB0A1E] bg-white text-[#EB0A1E]' : 'text-gray-500 hover:text-gray-800'}`}
           >
             Color
           </button>
-          <button 
-            onClick={() => setActiveTab('specs')}
-            className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors ${activeTab === 'specs' ? 'text-[#EB0A1E] border-b-2 border-[#EB0A1E] bg-white' : 'text-gray-500 hover:text-gray-800'}`}
-          >
-            Detalles
-          </button>
-          <button 
+          <button
+            type="button"
             onClick={() => setActiveTab('cotizar')}
-            className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-wider transition-colors ${activeTab === 'cotizar' ? 'text-[#EB0A1E] border-b-2 border-[#EB0A1E] bg-white' : 'text-gray-500 hover:text-gray-800'}`}
+            className={`min-w-0 flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wide transition-colors sm:text-[11px] sm:tracking-wider ${activeTab === 'cotizar' ? 'border-b-2 border-[#EB0A1E] bg-white text-[#EB0A1E]' : 'text-gray-500 hover:text-gray-800'}`}
           >
             Cotizar
           </button>
         </div>
 
         {/* Contenido Dinámico */}
-        <div className="p-6 h-[240px] overflow-y-auto">
-          
-          {/* TAB 1: VISUAL (COLORES) */}
+        <div className="h-[260px] overflow-y-auto p-5 sm:h-[280px]">
+          {/* TAB: COMPARAR — tabla + ficha de la versión activa */}
+          {activeTab === 'compare' && (
+            <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+              <p className="mb-1 text-center text-[10px] font-bold uppercase tracking-widest text-[#EB0A1E]">
+                Versiones
+              </p>
+              <h3 className="mb-3 text-center text-sm font-bold text-gray-900">
+                Comparativa rápida
+              </h3>
+
+              <div className="overflow-x-auto rounded-xl border border-gray-200">
+                <table className="w-full min-w-[280px] border-collapse text-left text-[9px] sm:text-[10px]">
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="px-1.5 py-2 font-semibold text-gray-600" />
+                      {VERSIONS.map((v) => (
+                        <th key={v.id} className="max-w-[4.5rem] px-0.5 py-1">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVersion(v)}
+                            className={`w-full rounded-lg px-0.5 py-1.5 text-center text-[9px] font-bold leading-tight transition-colors sm:text-[10px] ${
+                              selectedVersion.id === v.id
+                                ? 'bg-[#EB0A1E]/10 text-[#EB0A1E]'
+                                : 'text-gray-800 hover:bg-gray-100'
+                            }`}
+                          >
+                            {v.shortLabel}
+                          </button>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPARE_ROWS.map((row) => (
+                      <tr key={row.key} className="border-b border-gray-100 last:border-0">
+                        <td className="px-1.5 py-1.5 font-medium text-gray-600">{row.label}</td>
+                        {VERSIONS.map((v) => (
+                          <td
+                            key={v.id}
+                            className={`px-1 py-1.5 text-center leading-tight text-gray-800 ${
+                              selectedVersion.id === v.id ? 'bg-red-50/50 font-semibold' : ''
+                            }`}
+                          >
+                            {COMPARE_VALUES[v.id][row.key]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                  Tu versión · {selectedVersion.shortLabel}
+                </p>
+                <p className="mt-1 text-xs font-bold text-gray-900">{selectedVersion.fullName}</p>
+                <ul className="mt-2 list-inside list-disc space-y-0.5 text-[11px] text-gray-700">
+                  {selectedVersion.highlights.map((h) => (
+                    <li key={h}>{h}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {selectedVersion.sections.map((sec) => (
+                  <div key={sec.title}>
+                    <h4 className="mb-1.5 border-b border-gray-200 pb-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-800">
+                      {sec.title}
+                    </h4>
+                    <ul className="list-inside list-disc space-y-0.5 text-[10px] leading-snug text-gray-600">
+                      {sec.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('cotizar')}
+                className="mt-5 w-full rounded-xl bg-gray-900 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+              >
+                Calcular mensualidad
+              </button>
+            </div>
+          )}
+
+          {/* TAB: COLOR (secundario) */}
           {activeTab === 'visual' && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center mb-6">
-                <p className="text-sm text-gray-500 mb-1">Color Exterior</p>
-                <p className="font-bold text-gray-800 text-lg">{selectedColor.name}</p>
+              <p className="mb-1 text-center text-[10px] text-gray-500">
+                Complemento visual · mismo 360° en todos los colores
+              </p>
+              <div className="mb-5 text-center">
+                <p className="text-sm text-gray-500">Color exterior</p>
+                <p className="text-lg font-bold text-gray-800">{selectedColor.name}</p>
               </div>
-              
-              {/* Selector de Colores */}
+
               <div className="mt-4 flex flex-wrap justify-center gap-3">
                 {COLORS.map((color) => (
                   <button
                     key={color.id}
+                    type="button"
                     onClick={() => setSelectedColor(color)}
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-300 transition-all duration-300 ${selectedColor.id === color.id ? 'scale-110 shadow-lg ring-2 ring-[#EB0A1E] ring-offset-2' : 'hover:scale-105'}`}
                     style={{ backgroundColor: color.hex }}
@@ -276,50 +656,31 @@ export default function ToyotaWidget() {
                 ))}
               </div>
 
-              <button 
-                onClick={() => setActiveTab('specs')}
-                className="w-full mt-8 text-[#EB0A1E] text-sm font-semibold hover:underline flex items-center justify-center gap-1"
+              <button
+                type="button"
+                onClick={() => setActiveTab('compare')}
+                className="mt-8 flex w-full items-center justify-center gap-1 text-sm font-semibold text-[#EB0A1E] hover:underline"
               >
-                Ver características principales <ChevronRight size={16} />
+                Volver a comparar versiones <ChevronRight size={16} />
               </button>
             </div>
           )}
 
-          {/* TAB 2: SPECS (Matando la viñeta aburrida) */}
-          {activeTab === 'specs' && (
-            <div className="animate-in fade-in duration-300 h-full flex flex-col">
-              <h3 className="text-sm font-bold text-gray-800 mb-4">Equipamiento Destacado</h3>
-              <div className="grid grid-cols-2 gap-3 flex-1">
-                {FEATURES.map((feat, idx) => {
-                  const Icon = feat.icon;
-                  return (
-                    <div key={idx} className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex flex-col gap-2">
-                      <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-[#EB0A1E]">
-                        <Icon size={16} />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{feat.label}</p>
-                        <p className="text-xs font-bold text-gray-800 leading-tight mt-0.5">{feat.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <button 
-                onClick={() => setActiveTab('cotizar')}
-                className="w-full mt-4 bg-gray-900 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors"
-              >
-                Calcular Mensualidad
-              </button>
-            </div>
-          )}
-
-          {/* TAB 3: COTIZAR */}
+          {/* TAB: COTIZAR */}
           {activeTab === 'cotizar' && (
-            <div className="animate-in fade-in slide-in-from-left-4 duration-300 flex flex-col h-full">
-              <div className="space-y-5 flex-1">
+            <div className="animate-in fade-in slide-in-from-left-4 flex h-full flex-col duration-300">
+              <div className="mb-4 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                  Versión seleccionada
+                </p>
+                <p className="text-xs font-bold text-gray-900">{selectedVersion.fullName}</p>
+                <p className="text-[11px] text-[#EB0A1E]">
+                  Precio lista {formatMoney(selectedVersion.price)}
+                </p>
+              </div>
+              <div className="flex-1 space-y-5">
                 <div>
-                  <div className="flex justify-between text-xs font-bold text-gray-700 mb-2">
+                  <div className="mb-2 flex justify-between text-xs font-bold text-gray-700">
                     <span>Enganche ({enganche}%)</span>
                     <span className="text-[#EB0A1E]">{formatMoney(engancheAmount)}</span>
                   </div>
